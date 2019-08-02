@@ -1,0 +1,13 @@
+language: go
+
+services:
+  - docker
+
+before_install:
+- docker build -t go-docker-optimized -f Dockerfile.multistage .
+- docker run -d -p 8080:8080 go-docker-optimized
+
+script:
+  - curl 127.0.0.1:8080
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push ${TRAVIS_REPO_SLUG}:${TRAVIS_COMMIT}
